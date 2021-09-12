@@ -1,8 +1,12 @@
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import "../model/product.dart";
+import 'product.dart';
 
-class Products with ChangeNotifier{
+class Products with ChangeNotifier {
+  // var _showFavoritesOnly = false;
+  List<Product> get favItems{
+    return _items.where((element) => element.isFavorite).toList();
+  }
   List<Product> _items = [
     Product(
       id: 'p1',
@@ -39,11 +43,28 @@ class Products with ChangeNotifier{
   ];
 
   List<Product> get items {
+    // if (_showFavoritesOnly) {
+    //   return _items.where((element) => element.isFavorite).toList();
+    // }
     return [..._items];
   }
+
+  // void showFavoritesOnly() {
+  //   _showFavoritesOnly = true;
+  //   notifyListeners();
+  // }
+
+  // void showFavoritesAll() {
+  //   _showFavoritesOnly = false;
+  //   notifyListeners();
+  // }
 
   void addProduct() {
     // _items.add(value);
     notifyListeners();
+  }
+
+  Product findById(id) {
+    return _items.firstWhere((element) => element.id == id);
   }
 }
