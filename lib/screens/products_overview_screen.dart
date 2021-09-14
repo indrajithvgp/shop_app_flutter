@@ -1,5 +1,7 @@
 import "package:flutter/material.dart";
+import 'package:shop_app/providers/cart.dart';
 import 'package:shop_app/providers/products.dart';
+import 'package:shop_app/widgets/badge.dart';
 import 'package:shop_app/widgets/product_item.dart';
 import 'package:shop_app/widgets/products_grid.dart';
 import '../providers/product.dart';
@@ -38,7 +40,15 @@ class _ProductOverviewState extends State<ProductOverview> {
                           _showFavoritesOnly = false;
                         }
                       })
-                    })
+                    }),
+            Consumer<Cart>(
+              builder: (_, cart, ch)=> Badge(
+                  child: ch,
+                      value: cart.itemCount.toString(),
+                ),
+                child: IconButton(
+                    onPressed: () {}, icon: Icon(Icons.shopping_cart))
+            )
           ],
         ),
         body: ProductsGrid(_showFavoritesOnly));

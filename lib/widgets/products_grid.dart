@@ -9,8 +9,6 @@ class ProductsGrid extends StatelessWidget {
     this.showFavoritesOnly,
   );
 
-  // final List<Product> loadedProducts;
-
   @override
   Widget build(BuildContext context) {
     final productsData = Provider.of<Products>(context);
