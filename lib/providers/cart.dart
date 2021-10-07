@@ -28,12 +28,30 @@ class Cart with ChangeNotifier {
     var total = 0.0;
     _items.forEach((key, value) {
       total += value.price * value.quantity;
-    }); 
+    });
     return total;
   }
 
   void removeItem(String id) {
     _items.remove(id);
+    notifyListeners();
+  }
+
+  void removeSingleItem(String productId) {
+    if (!_items.containsKey(productId)) {
+      return;
+    }
+    if (_items[productId].quantity > 1) {
+      _items.update(
+          productId,
+          (existing) => CartItem(
+              id: existing.id,
+              price: existing.price,
+              title: existing.title,
+              quantity: existing.quantity + 1));
+    } else {
+      _items.remove(productId);
+    }
     notifyListeners();
   }
 

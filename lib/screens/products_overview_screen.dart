@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import 'package:shop_app/providers/cart.dart';
 import 'package:shop_app/providers/products.dart';
 import 'package:shop_app/screens/cart_screen.dart';
+import 'package:shop_app/widgets/app_drawer.dart';
 import 'package:shop_app/widgets/badge.dart';
 import 'package:shop_app/widgets/product_item.dart';
 import 'package:shop_app/widgets/products_grid.dart';
@@ -21,6 +22,7 @@ class _ProductOverviewState extends State<ProductOverview> {
   Widget build(BuildContext context) {
     // final productsContainer = Provider.of<Products>(context);
     return Scaffold(
+        drawer: AppDrawer(),
         appBar: AppBar(
           title: Text("My App"),
           actions: <Widget>[
