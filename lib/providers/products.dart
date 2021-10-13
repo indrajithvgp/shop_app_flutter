@@ -4,9 +4,10 @@ import 'product.dart';
 
 class Products with ChangeNotifier {
   // var _showFavoritesOnly = false;
-  List<Product> get favItems{
+  List<Product> get favItems {
     return _items.where((element) => element.isFavorite).toList();
   }
+
   List<Product> _items = [
     Product(
       id: 'p1',
@@ -59,8 +60,19 @@ class Products with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  void addProduct() {
-    // _items.add(value);
+  void addProduct(Product value) {
+    _items.add(value);
+    notifyListeners();
+  }
+
+  void updateProduct(String id, Product product) {
+    final _id = _items.indexWhere((item) => item.id == id);
+    _items[_id] = product;
+    notifyListeners();
+  }
+
+  void removeProduct(String id) {
+    _items.removeWhere((item) => item.id == id);
     notifyListeners();
   }
 
