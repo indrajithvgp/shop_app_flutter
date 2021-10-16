@@ -30,8 +30,11 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _form = GlobalKey<FormState>();
 
   @override
-  void initState() {
+  void initState() async {
     _urlFocus.addListener(updateListener);
+    await Future.delayed(Duration(milliseconds: 2), ()=>{
+      
+    });
   }
 
   @override
@@ -71,7 +74,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     super.dispose();
   }
 
-  void _saveForm() {
+  void _saveForm() async {
     setState(() {
       _isLoading = true;
     });
@@ -84,19 +87,44 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
     _form.currentState.save();
     if (!edit) {
-      Provider.of<Products>(context, listen: false)
-          .addProduct(_editedProduct)
-          .then((_) {
+      try {
+        await Provider.of<Products>(context, listen: false)
+            .addProduct(_editedProduct);
         setState(() {
           _isLoading = false;
         });
-      });
+      } catch (err) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+      // await Provider.of<Products>(context, listen: false)
+      //     .addProduct(_editedProduct)
+      //     .then((_) {
+      //   setState(() {
+      //     _isLoading = false;
+      //   });
+      // });
     } else {
-      Provider.of<Products>(context, listen: false)
-          .updateProduct(_editedProduct.id, _editedProduct);
-      setState(() {
-        _isLoading = true;
-      });
+      try {
+        setState(() {
+          _isLoading = true;
+        });
+        await Provider.of<Products>(context, listen: false)
+            .updateProduct(_editedProduct.id, _editedProduct);
+        setState(() {
+          _isLoading = false;
+        });
+      } catch (err) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+      // Provider.of<Products>(context, listen: false)
+      //     .updateProduct(_editedProduct.id, _editedProduct);
+      // setState(() {
+      //   _isLoading = true;
+      // });
     }
 
     Navigator.of(context).pop();

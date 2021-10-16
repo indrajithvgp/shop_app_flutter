@@ -63,20 +63,40 @@ class Products with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  Future<void> addProduct(Product value) {
+  Future<void> fetchProducts() async {
     var url = Uri.parse(
         "https://flutter-app-b86f6-default-rtdb.firebaseio.com/products.json");
+    try {
+      final response = await http.get(url);
+      var extractedResponse = await response.body as Map<String, dynamic>;
+      List<Product> _loadedProducts = [];
+      extractedResponse.forEach((key, value) {
+        _loadedProducts.add(Product(
+            description: value.description,
+            title: value.title,
+            imageUrl: value.imageUrl,
+            price: value.price,
+            isFavorite: value.isFavorite,
+            id: key));
+      });
+      _items = _loadedProducts;
+      notifyListeners();
+    } catch (err) {}
+  }
 
-    return http
-        .post(url,
-            body: json.encode({
-              "description": value.description,
-              "title": value.title,
-              "price": value.price,
-              "isFavorite": value.isFavorite,
-              "imageUrl": value.imageUrl,
-            }))
-        .then((response) {
+  Future<void> addProduct(Product value) async {
+    var url = Uri.parse(
+        "https://flutter-app-b86f6-default-rtdb.firebaseio.com/products.json");
+    try {
+      var response = await http.post(url,
+          body: json.encode({
+            "description": value.description,
+            "title": value.title,
+            "price": value.price,
+            "isFavorite": value.isFavorite,
+            "imageUrl": value.imageUrl,
+          }));
+
       final product = Product(
         description: value.description,
         title: value.title,
@@ -87,7 +107,30 @@ class Products with ChangeNotifier {
       _items.add(product);
       notifyListeners();
       return;
-    });
+    } catch (error) {
+      print(error);
+    }
+    // return http
+    //     .post(url,
+    //         body: json.encode({
+    //           "description": value.description,
+    //           "title": value.title,
+    //           "price": value.price,
+    //           "isFavorite": value.isFavorite,
+    //           "imageUrl": value.imageUrl,
+    //         }))
+    //     .then((response) {
+    //   final product = Product(
+    //     description: value.description,
+    //     title: value.title,
+    //     price: value.price,
+    //     id: json.decode(response.body),
+    //     imageUrl: value.imageUrl,
+    //   );
+    //   _items.add(product);
+    //   notifyListeners();
+    //   return;
+    // });
   }
 
   void updateProduct(String id, Product product) {
