@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/model/http_exception.dart';
 import 'product.dart';
 import 'package:http/http.dart' as http;
 
@@ -135,6 +136,20 @@ class Products with ChangeNotifier {
 
   void updateProduct(String id, Product product) {
     final _id = _items.indexWhere((item) => item.id == id);
+    if (_id >= 0) {
+      final url =
+          "https://flutter-app-b86f6-default-rtdb.firebaseio.com/products/$id.json";
+      try {
+        http.patch(Uri.parse(url),
+            body: json.encode({
+              "description": product.description,
+              "title": product.title,
+              "price": product.price,
+              // "isFavorite": product.isFavorite,
+              "imageUrl": product.imageUrl,
+            }));
+      } catch (err) {}
+    }
     _items[_id] = product;
     notifyListeners();
   }
@@ -146,5 +161,25 @@ class Products with ChangeNotifier {
 
   Product findById(id) {
     return _items.firstWhere((element) => element.id == id);
+  }
+
+  void deleteProduct(String id) {
+    final _id = _items.indexWhere((item) => item.id == id);
+    var _product = _items[_id];
+    _items.removeAt(_id);
+    final url =
+        "https://flutter-app-b86f6-default-rtdb.firebaseio.com/products/$id.json";
+    try {
+      final response = http.delete(Uri.parse(url));
+      if (response.statusCode >= 400) {
+        _items.insert(_id, _product);
+        notifyListeners();
+        throw HttpException("Deletion Failed");
+      }
+      _product = null;
+    } catch (err) {
+      _items.insert(_id, _product);
+    }
+    notifyListeners();
   }
 }
