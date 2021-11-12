@@ -32,9 +32,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   @override
   void initState() async {
     _urlFocus.addListener(updateListener);
-    await Future.delayed(Duration(milliseconds: 2), ()=>{
-      
-    });
+    await Future.delayed(Duration(milliseconds: 2), () => {});
   }
 
   @override
@@ -93,10 +91,27 @@ class _EditProductScreenState extends State<EditProductScreen> {
         setState(() {
           _isLoading = false;
         });
+        Navigator.of(context).pop();
       } catch (err) {
+        showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+                  title: Text('An error occured'),
+                  content: Text('Something went wrong'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('Okay'),
+                      onPressed: () {
+                        Navigator.of(ctx).pop();
+                      },
+                    )
+                  ],
+                ));
+      } finally {
         setState(() {
           _isLoading = false;
         });
+        Navigator.of(context).pop();
       }
       // await Provider.of<Products>(context, listen: false)
       //     .addProduct(_editedProduct)
@@ -119,16 +134,24 @@ class _EditProductScreenState extends State<EditProductScreen> {
         setState(() {
           _isLoading = false;
         });
+        showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+                  title: Text('An error occured'),
+                  content: Text('Something went wrong'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('Okay'),
+                      onPressed: () {
+                        Navigator.of(ctx).pop();
+                      },
+                    )
+                  ],
+                ));
       }
-      // Provider.of<Products>(context, listen: false)
-      //     .updateProduct(_editedProduct.id, _editedProduct);
-      // setState(() {
-      //   _isLoading = true;
-      // });
     }
 
     Navigator.of(context).pop();
-    // print(_editedProduct);
   }
 
   @override

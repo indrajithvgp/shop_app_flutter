@@ -21,7 +21,7 @@ class _ProductOverviewState extends State<ProductOverview> {
   var _isLoading = false;
   @override
   void initState() {
-    super.initState();
+    super.initState(); 
     // Future.delayed(Duration(microseconds: 2), () async {
     //   try {
     //     await Provider.of<Products>(context).fetchProducts();

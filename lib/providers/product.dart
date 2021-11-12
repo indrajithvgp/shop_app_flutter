@@ -26,10 +26,10 @@ class Product with ChangeNotifier {
     final url =
         "https://flutter-app-b86f6-default-rtdb.firebaseio.com/products/$id.json";
     try {
-      final response = http.patch(Uri.parse(url), body: json.encode({
+      final response = await http.patch(Uri.parse(url), body: json.encode({
         "isFavorite": isFavorite
       }));
-      if (response.statusCode >= 400) {
+      if (response.statusCode >= 400) { 
         isFavorite = oldValue;
         notifyListeners();
       }

@@ -16,13 +16,13 @@ class _OrderScreenState extends State<OrderScreen> {
   @override
   void initState() {
     Future.delayed(Duration(seconds: 0)).then((_) async {
-      setState(() {
-        _isLoading = true;
-      });
-      await Provider.of<Orders>(context).fetchOrders();
-      setState(() {
-        _isLoading = false;
-      });
+      // setState(() {
+      //   _isLoading = true;
+      // });
+      // await Provider.of<Orders>(context).fetchOrders();
+      // setState(() {
+      //   _isLoading = false;
+      // });
     });
   }
 
@@ -32,12 +32,31 @@ class _OrderScreenState extends State<OrderScreen> {
     return Scaffold(
         appBar: AppBar(title: Text("Your Orders")),
         drawer: AppDrawer(),
-        body: _isLoading
-            ? CircularProgressIndicator()
-            : ListView.builder(
-                itemCount: orderData.orders.length,
-                itemBuilder: (ctx, i) => screen.OrderItem(
-                      order: orderData.orders[i],
-                    )));
+        body: FutureBuilder(
+            future: Provider.of<Orders>(context).fetchOrders(),
+            builder: (ctx, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else {
+                if (snapshot.error != null) {
+                  return Text("Error Occured: " + snapshot.error);
+                } else {
+                  return Consumer<Orders>(builder: (ctx, orderData, child) {
+                    return ListView.builder(
+                        itemCount: orderData.orders.length,
+                        itemBuilder: (ctx, i) => screen.OrderItem(
+                              order: orderData.orders[i],
+                            ));
+                  });
+                }
+              }
+            }));
+    // body: _isLoading
+    //     ? CircularProgressIndicator()
+    //     : ListView.builder(
+    //         itemCount: orderData.orders.length,
+    //         itemBuilder: (ctx, i) => screen.OrderItem(
+    //               order: orderData.orders[i],
+    //             )));
   }
 }

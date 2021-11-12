@@ -82,6 +82,7 @@ class Products with ChangeNotifier {
       });
       _items = _loadedProducts;
       notifyListeners();
+      return Future.value();
     } catch (err) {}
   }
 
@@ -93,7 +94,7 @@ class Products with ChangeNotifier {
           body: json.encode({
             "description": value.description,
             "title": value.title,
-            "price": value.price,
+            "price": value.price, 
             "isFavorite": value.isFavorite,
             "imageUrl": value.imageUrl,
           }));
@@ -102,12 +103,12 @@ class Products with ChangeNotifier {
         description: value.description,
         title: value.title,
         price: value.price,
-        id: json.decode(response.body),
-        imageUrl: value.imageUrl,
+        id: json.decode(response.body)["name"],
+        imageUrl: value.imageUrl, 
       );
       _items.add(product);
       notifyListeners();
-      return;
+      return Future.value();
     } catch (error) {
       print(error);
     }
@@ -134,13 +135,13 @@ class Products with ChangeNotifier {
     // });
   }
 
-  void updateProduct(String id, Product product) {
+  void updateProduct(String id, Product product) async{
     final _id = _items.indexWhere((item) => item.id == id);
     if (_id >= 0) {
       final url =
           "https://flutter-app-b86f6-default-rtdb.firebaseio.com/products/$id.json";
       try {
-        http.patch(Uri.parse(url),
+         await http.patch(Uri.parse(url),
             body: json.encode({
               "description": product.description,
               "title": product.title,
@@ -148,10 +149,11 @@ class Products with ChangeNotifier {
               // "isFavorite": product.isFavorite,
               "imageUrl": product.imageUrl,
             }));
+            _items[_id] = product;
+        notifyListeners();
       } catch (err) {}
     }
-    _items[_id] = product;
-    notifyListeners();
+    
   }
 
   void removeProduct(String id) {
@@ -163,23 +165,25 @@ class Products with ChangeNotifier {
     return _items.firstWhere((element) => element.id == id);
   }
 
-  void deleteProduct(String id) {
+  Future<void> deleteProduct(String id) async{
     final _id = _items.indexWhere((item) => item.id == id);
     var _product = _items[_id];
     _items.removeAt(_id);
     final url =
         "https://flutter-app-b86f6-default-rtdb.firebaseio.com/products/$id.json";
     try {
-      final response = http.delete(Uri.parse(url));
-      if (response.statusCode >= 400) {
+      final response = await http.delete(Uri.parse(url));
+      if (response.statusCode >= 400) { 
         _items.insert(_id, _product);
         notifyListeners();
-        throw HttpException("Deletion Failed");
+        throw HttpException("Product Deletion Failed");
       }
       _product = null;
+      notifyListeners();
+      return Future.value();
     } catch (err) {
       _items.insert(_id, _product);
     }
-    notifyListeners();
+    
   }
 }
