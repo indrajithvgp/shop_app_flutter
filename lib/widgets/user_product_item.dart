@@ -34,8 +34,11 @@ class UserProductItem extends StatelessWidget {
                         .removeProduct(id);
                   } catch (error) {
                     print(error);
-                    scaffold.showSnackBar(
-                        SnackBar(content: Text("Deletion Failed", textAlign: Alignment.center,)));
+                    scaffold.showSnackBar(SnackBar(
+                        content: Text(
+                      "Deletion Failed",
+                      textAlign: TextAlign.center,
+                    )));
                   }
                 },
                 icon: Icon(Icons.delete),

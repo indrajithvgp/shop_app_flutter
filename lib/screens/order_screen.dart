@@ -28,11 +28,11 @@ class _OrderScreenState extends State<OrderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final orderData = Provider.of<Orders>(context);
+    final orderData = Provider.of<Orders>(context).orders;
     return Scaffold(
         appBar: AppBar(title: Text("Your Orders")),
         drawer: AppDrawer(),
-        body: FutureBuilder(
+        body: FutureBuilder<void>(
             future: Provider.of<Orders>(context).fetchOrders(),
             builder: (ctx, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -42,6 +42,7 @@ class _OrderScreenState extends State<OrderScreen> {
                   return Text("Error Occured: " + snapshot.error);
                 } else {
                   return Consumer<Orders>(builder: (ctx, orderData, child) {
+                    // print(orderData);
                     return ListView.builder(
                         itemCount: orderData.orders.length,
                         itemBuilder: (ctx, i) => screen.OrderItem(
@@ -50,6 +51,7 @@ class _OrderScreenState extends State<OrderScreen> {
                   });
                 }
               }
+              
             }));
     // body: _isLoading
     //     ? CircularProgressIndicator()

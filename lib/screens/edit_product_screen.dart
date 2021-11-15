@@ -30,9 +30,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _form = GlobalKey<FormState>();
 
   @override
-  void initState() async {
+  void initState() {
     _urlFocus.addListener(updateListener);
-    await Future.delayed(Duration(milliseconds: 2), () => {});
+    Future.delayed(Duration(milliseconds: 2), () => {});
   }
 
   @override

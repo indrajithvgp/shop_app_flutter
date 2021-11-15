@@ -88,7 +88,7 @@ class _ProductOverviewState extends State<ProductOverview> {
           ],
         ),
         body: _isLoading
-            ? CircularProgressIndicator()
+            ? Center(child: CircularProgressIndicator())
             : ProductsGrid(_showFavoritesOnly));
   }
 }
