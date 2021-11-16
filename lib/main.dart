@@ -28,21 +28,23 @@ class MyApp extends StatelessWidget {
         // ChangeNotifierProvider(create: (ctx) => Orders()),
         ChangeNotifierProvider.value(value: Orders()),
       ],
-      child: MaterialApp(
-          title: 'FMall',
-          theme: ThemeData(
-            accentColor: Colors.yellow,
-            fontFamily: 'Lato',
-            primarySwatch: Colors.green,
-          ),
-          home: AuthScreen(),
-          routes: {
-            ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
-            CartScreen.routeName: (ctx) => CartScreen(),
-            OrderScreen.routeName: (ctx) => OrderScreen(),
-            UserProductScreen.routeName: (ctx) => UserProductScreen(),
-            EditProductScreen.routeName: (ctx) => EditProductScreen()
-          }),
+      child: Consumer<Auth>(
+        builder: (ctx, auth, _) => MaterialApp(
+            title: 'FMall',
+            theme: ThemeData(
+              accentColor: Colors.yellow,
+              fontFamily: 'Lato',
+              primarySwatch: Colors.green,
+            ),
+            home: auth.isAuth ? MyHomePage() : AuthScreen(),
+            routes: {
+              ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
+              CartScreen.routeName: (ctx) => CartScreen(),
+              OrderScreen.routeName: (ctx) => OrderScreen(),
+              UserProductScreen.routeName: (ctx) => UserProductScreen(),
+              EditProductScreen.routeName: (ctx) => EditProductScreen()
+            }),
+      ),
     );
   }
 }
