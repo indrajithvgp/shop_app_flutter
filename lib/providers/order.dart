@@ -10,12 +10,13 @@ class OrderItem {
   final double amount;
   final List<CartItem> products;
   final DateTime dateTime;
-
+  final String authToken
   OrderItem(
       {@required this.id,
       @required this.amount,
       @required this.dateTime,
-      @required this.products});
+      @required this.products
+      });
 }
 
 class Orders with ChangeNotifier {
@@ -24,6 +25,8 @@ class Orders with ChangeNotifier {
   List<OrderItem> get orders {
     return [..._orders];
   }
+  final String authToken;
+  Orders(this.authToken, this._orders);
 
   // void addOrder(List<CartItem> cartProducts, double total) {
   //   _orders.insert(
@@ -38,7 +41,7 @@ class Orders with ChangeNotifier {
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
     final url =
-        "https://flutter-app-b86f6-default-rtdb.firebaseio.com/orders.json";
+        "https://flutter-app-b86f6-default-rtdb.firebaseio.com/orders.json?auth=$authToken";
     final timeStamp = DateTime.now();
     final response = await http.post(Uri.parse(url),
         body: json.encode({
@@ -65,7 +68,7 @@ class Orders with ChangeNotifier {
 
   Future<void> fetchOrders() async {
     final url =
-        "https://flutter-app-b86f6-default-rtdb.firebaseio.com/orders.json";
+        "https://flutter-app-b86f6-default-rtdb.firebaseio.com/orders.json?auth=$authToken";
 
     final response = await http.get(Uri.parse(url));
     final List<OrderItem> loadedOrders = [];

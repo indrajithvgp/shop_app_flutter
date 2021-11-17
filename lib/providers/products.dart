@@ -11,6 +11,9 @@ class Products with ChangeNotifier {
   List<Product> get favItems {
     return _items.where((element) => element.isFavorite).toList();
   }
+  final String authToken;
+  final String userID
+  Products(this.authToken,this.userId, this._items);
 
   List<Product> _items = [
     Product(
@@ -65,19 +68,25 @@ class Products with ChangeNotifier {
   // }
 
   Future<void> fetchProducts() async {
+    // final
     var url = Uri.parse(
-        "https://flutter-app-b86f6-default-rtdb.firebaseio.com/products.json");
+        "https://flutter-app-b86f6-default-rtdb.firebaseio.com/products.json?auth=$authToken");
+        var favUrl = Uri.parse(
+        "https://flutter-app-b86f6-default-rtdb.firebaseio.com/userFavorites/$userId.json?auth=$authToken");
     try {
       final response = await http.get(url);
+      final fResponse = await http.get(favUrl);
+      final favData = json.decode(fResponse.body);
       var extractedResponse = await response.body as Map<String, dynamic>;
       List<Product> _loadedProducts = [];
+      
       extractedResponse.forEach((key, value) {
         _loadedProducts.add(Product(
             description: value.description,
             title: value.title,
             imageUrl: value.imageUrl,
             price: value.price,
-            isFavorite: value.isFavorite,
+            isFavorite: favData == null ? false : favData[key] ?? false,
             id: key));
       });
       _items = _loadedProducts;
@@ -88,7 +97,7 @@ class Products with ChangeNotifier {
 
   Future<void> addProduct(Product value) async {
     var url = Uri.parse(
-        "https://flutter-app-b86f6-default-rtdb.firebaseio.com/products.json");
+        "https://flutter-app-b86f6-default-rtdb.firebaseio.com/products.json?auth=$authToken");
     try {
       var response = await http.post(url,
           body: json.encode({
@@ -139,7 +148,7 @@ class Products with ChangeNotifier {
     final _id = _items.indexWhere((item) => item.id == id);
     if (_id >= 0) {
       final url =
-          "https://flutter-app-b86f6-default-rtdb.firebaseio.com/products/$id.json";
+          "https://flutter-app-b86f6-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken";
       try {
          await http.patch(Uri.parse(url),
             body: json.encode({
@@ -170,7 +179,7 @@ class Products with ChangeNotifier {
     var _product = _items[_id];
     _items.removeAt(_id);
     final url =
-        "https://flutter-app-b86f6-default-rtdb.firebaseio.com/products/$id.json";
+        "https://flutter-app-b86f6-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken";
     try {
       final response = await http.delete(Uri.parse(url));
       if (response.statusCode >= 400) { 
