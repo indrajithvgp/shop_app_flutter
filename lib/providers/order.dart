@@ -10,13 +10,12 @@ class OrderItem {
   final double amount;
   final List<CartItem> products;
   final DateTime dateTime;
-  final String authToken
+
   OrderItem(
       {@required this.id,
       @required this.amount,
       @required this.dateTime,
-      @required this.products
-      });
+      @required this.products});
 }
 
 class Orders with ChangeNotifier {
@@ -25,6 +24,7 @@ class Orders with ChangeNotifier {
   List<OrderItem> get orders {
     return [..._orders];
   }
+
   final String authToken;
   Orders(this.authToken, this._orders);
 
