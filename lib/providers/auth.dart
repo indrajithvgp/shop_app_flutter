@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:shop_app/model/http_exception.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth with ChangeNotifier {
   String _token;
@@ -28,7 +29,7 @@ class Auth with ChangeNotifier {
     }
   }
 
-  Future<void> _authenticate(
+  Future<void> _authenticate (
       String email, String password, String urlSegment) async {
     try {
       final URL =
@@ -39,7 +40,7 @@ class Auth with ChangeNotifier {
             'password': password,
             'returnSecureToken': true
           }));
-      autoLogOut();
+
       final responseData = json.decode(response.body);
 
       // print(responseData);
@@ -53,6 +54,17 @@ class Auth with ChangeNotifier {
           seconds: int.parse(responseData['expiresIn']),
         ),
       );
+      _autoLogOut();
+      notifyListeners();
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString(
+          'userData',
+          json.encode({
+            'userId': _userId,
+            'token': _token,
+            'expiryDate': _expiryDate.toIso8601String()
+          }));
+      
     } catch (error) {
       throw error;
     }
@@ -66,6 +78,24 @@ class Auth with ChangeNotifier {
     return _authenticate(email, password, 'signUp');
   }
 
+  Future<bool> tryAutoLogIn()async{
+    final prefs = await SharedPreferences.getInstance();
+    if(!prefs.containsKey('userData')){
+      return false;
+    }
+    final extractedData = json.decode(prefs.getString('userData')) as Map<String, Object>;
+    final eDate = DateTime.parse(extractedData['expiryDate']);
+    if(eDate.isBefore(DateTime.now())){
+      return false;
+    }
+    _token = extractedData['token'];
+    _userId = extractedData['userId'];
+    _expiryDate = eDate;
+    notifyListeners();
+    _autoLogOut();
+
+  }
+
   void logOut() {
     _token = null;
     _userId = null;
@@ -77,7 +107,7 @@ class Auth with ChangeNotifier {
     notifyListeners();
   }
 
-  void autoLogOut() {
+  void _autoLogOut() {
     if (_authTime != null) {
       _authTime.cancel();
     }
