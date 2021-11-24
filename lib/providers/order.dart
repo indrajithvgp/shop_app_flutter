@@ -47,7 +47,7 @@ class Orders with ChangeNotifier {
         body: json.encode({
           'amount': total,
           'dateTime': timeStamp.toIso8601String(),
-          "productId": cartProducts
+          "products": cartProducts
               .map((e) => ({
                     'id': e.id,
                     'quantity': e.quantity,
@@ -74,6 +74,7 @@ class Orders with ChangeNotifier {
     final List<OrderItem> loadedOrders = [];
     final extractedResponse =
         json.decode(response.body) as Map<String, dynamic>;
+    print(extractedResponse);
     if (extractedResponse == null) {
       return;
     }
@@ -90,9 +91,9 @@ class Orders with ChangeNotifier {
                   quantity: item.quantity))
               .toList()));
     });
-
+    print(loadedOrders);
     _orders = loadedOrders.reversed.toList();
     notifyListeners();
-    return Future.value();
+    return;
   }
 }

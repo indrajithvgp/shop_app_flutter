@@ -15,6 +15,7 @@ class Auth with ChangeNotifier {
     if (token != null) {
       return true;
     }
+    return false;
   }
 
   String get userId {
@@ -27,13 +28,14 @@ class Auth with ChangeNotifier {
         _expiryDate.isAfter(DateTime.now())) {
       return _token;
     }
+    return null;
   }
 
-  Future<void> _authenticate (
+  Future<void> _authenticate(
       String email, String password, String urlSegment) async {
     try {
       final URL =
-          "https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key==x";
+          "https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=AIzaSyAxc6kqVZrOs3egchL36C5-fZINL2XfN";
       final response = await http.post(Uri.parse(URL),
           body: json.encode({
             'email': email,
@@ -64,7 +66,6 @@ class Auth with ChangeNotifier {
             'token': _token,
             'expiryDate': _expiryDate.toIso8601String()
           }));
-      
     } catch (error) {
       throw error;
     }
@@ -78,14 +79,16 @@ class Auth with ChangeNotifier {
     return _authenticate(email, password, 'signUp');
   }
 
-  Future<bool> tryAutoLogIn()async{
+  Future<bool> tryAutoLogIn() async {
     final prefs = await SharedPreferences.getInstance();
-    if(!prefs.containsKey('userData')){
+    if (!prefs.containsKey('userData')) {
       return false;
     }
-    final extractedData = json.decode(prefs.getString('userData')) as Map<String, Object>;
+    final extractedData =
+        json.decode(prefs.getString('userData')) as Map<String, Object>;
+    print(extractedData);
     final eDate = DateTime.parse(extractedData['expiryDate']);
-    if(eDate.isBefore(DateTime.now())){
+    if (eDate.isBefore(DateTime.now())) {
       return false;
     }
     _token = extractedData['token'];
@@ -93,10 +96,10 @@ class Auth with ChangeNotifier {
     _expiryDate = eDate;
     notifyListeners();
     _autoLogOut();
-
   }
 
   void logOut() {
+    // print(_token);
     _token = null;
     _userId = null;
     _expiryDate = null;

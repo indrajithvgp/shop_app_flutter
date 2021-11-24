@@ -21,20 +21,24 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // final auth = Provider.of<Auth>(context);
     return MultiProvider(
       providers: [
-        ChangeNotifierProxyProvider<Auth, Products>(
-            update: (ctx, auth, oldProducts) => Products(auth.token,
-                auth.userId, oldProducts == null ? [] : oldProducts.items)),
         ChangeNotifierProvider(create: (ctx) => Cart()),
         ChangeNotifierProvider(create: (ctx) => Auth()),
+        ChangeNotifierProxyProvider<Auth, Products>(
+          create: (ctx) => Products(),
+          update: (ctx, auth, prevProducts) => prevProducts..update(auth.token),
+        ),
         // ChangeNotifierProvider(create: (ctx) => Orders()),
         ChangeNotifierProxyProvider<Auth, Orders>(
             update: (ctx, auth, oldOrders) =>
                 Orders(auth.token, oldOrders == null ? [] : oldOrders.orders)),
       ],
-      child: Consumer<Auth>(
-        builder: (ctx, auth, _) => MaterialApp(
+      child: Consumer<Auth>(builder: (context, auth, _) {
+        print(auth.isAuth);
+        print(auth.token);
+        return MaterialApp(
             title: 'FMall',
             theme: ThemeData(
               accentColor: Colors.yellow,
@@ -42,7 +46,7 @@ class MyApp extends StatelessWidget {
               primarySwatch: Colors.green,
             ),
             // AuthScreen()
-            home: auth.isAuth != null
+            home: auth.isAuth
                 ? MyHomePage()
                 : FutureBuilder(
                     future: auth.tryAutoLogIn(),
@@ -57,8 +61,8 @@ class MyApp extends StatelessWidget {
               OrderScreen.routeName: (ctx) => OrderScreen(),
               UserProductScreen.routeName: (ctx) => UserProductScreen(),
               EditProductScreen.routeName: (ctx) => EditProductScreen()
-            }),
-      ),
+            });
+      }),
     );
   }
 }
@@ -67,7 +71,7 @@ class MyHomePage extends StatefulWidget {
   MyHomePage({@required this.title});
 
   // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
+  // that it has a Sta  te object (defined below) that contains fields that affect
   // how it looks.
 
   // This class is the configuration for the state. It holds the values (in this

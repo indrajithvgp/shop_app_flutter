@@ -7,7 +7,7 @@ import 'package:shop_app/screens/user_product_screen.dart';
 class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final auth = Provider.of<Auth>(context, listen: false);
+
     return Drawer(
         child: Column(children: [
       AppBar(title: Text("Hello friend")),
@@ -39,7 +39,9 @@ class AppDrawer extends StatelessWidget {
           onTap: () {
             Navigator.of(context)
                 .pop();
-              auth.logOut();
+                Provider.of<Auth>(context, listen: false).logOut();
+                // Navigator.of(context).pushReplacementNamed(UserProductScreen.routeName);
+              
           })
     ]));
   }

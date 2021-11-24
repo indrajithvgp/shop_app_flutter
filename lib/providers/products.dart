@@ -12,10 +12,12 @@ class Products with ChangeNotifier {
     return _items.where((element) => element.isFavorite).toList();
   }
 
-  final String authToken;
-  final String userId;
-  Products(this.authToken, this.userId, this._items);
-
+  String userId;
+  // Products(this.userId, this._items);
+  String authToken;
+  void update(String token) {
+    authToken = token;
+  }
   List<Product> _items = [
     Product(
       id: 'p1',
