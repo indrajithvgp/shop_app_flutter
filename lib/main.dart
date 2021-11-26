@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/helpers/CustomPageRoute.dart';
 import 'package:shop_app/providers/cart.dart';
 import 'package:shop_app/providers/order.dart';
 import 'package:shop_app/providers/products.dart';
@@ -41,10 +42,13 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
             title: 'FMall',
             theme: ThemeData(
-              accentColor: Colors.yellow,
-              fontFamily: 'Lato',
-              primarySwatch: Colors.green,
-            ),
+                accentColor: Colors.yellow,
+                fontFamily: 'Lato',
+                primarySwatch: Colors.green,
+                pageTransitionsTheme: PageTransitionsTheme(builders: {
+                  TargetPlatform.android: CustomTransition(),
+                  TargetPlatform.iOS: CustomTransition()
+                })),
             // AuthScreen()
             home: auth.isAuth
                 ? MyHomePage()
